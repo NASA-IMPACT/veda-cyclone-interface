@@ -69,7 +69,7 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
                 if (!dateTime) return cycloneDataset.subDailyAssets[0];
                 const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might
                 // be attached with the target datetime
-                const index = findNearestDatetimeIndex(cycloneDataset.subDailyAssets, dateTimeNoTimezone)
+                const index = findNearestDatetimeSTACIndex(cycloneDataset.subDailyAssets, dateTimeNoTimezone)
                 const nearestAsset: STACItem = cycloneDataset.subDailyAssets[index];
                 return nearestAsset;
             },
@@ -77,7 +77,7 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
                 if (!dateTime) return dateTime;
                 const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might
                 // be attached with the target datetime
-                const index = findNearestDatetimeIndex(cycloneDataset.subDailyAssets, dateTimeNoTimezone)
+                const index = findNearestDatetimeSTACIndex(cycloneDataset.subDailyAssets, dateTimeNoTimezone)
                 const nearestAsset: STACItem = cycloneDataset.subDailyAssets[index];
                 if (nearestAsset && nearestAsset.properties && nearestAsset.properties.datetime) {
                     const formattedDt = moment.utc(nearestAsset.properties.datetime).format('YYYY-MM-DD hh:mm:ss A'); // remove the timezone information that might
@@ -162,10 +162,17 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
             datetimes: datetimes,
             getAsset: (dateTime: string) => {
                 if (!dateTime || !cycloneShapeDataset.datetimes.length) return cycloneShapeDataset.subDailyAssets;
-                const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might
-                // be attached with the target datetime
-                const [ startIndex, endIndex ] = findWindowIndex(cycloneShapeDataset.datetimes, dateTimeNoTimezone)
-                if (startIndex === -1 || endIndex === -1) return [];
+                const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might be attached with the target datetime
+                const index = findNearestDatetimeIndex(cycloneShapeDataset.datetimes, dateTimeNoTimezone)
+                let offset = 5;
+                let startIndex = index - offset;
+                let endIndex = index + offset;
+                if (startIndex < 0) {
+                    startIndex = 0
+                }
+                if (endIndex > cycloneShapeDataset.datetimes.length - 1) {
+                    endIndex = cycloneShapeDataset.datetimes.length - 1
+                }
                 const assetsForDateTime: PolygonAsset[] | LineStringAsset[] | PointAsset[] = cycloneShapeDataset.subDailyAssets.slice(startIndex, endIndex+1);
                 return assetsForDateTime;
             }
@@ -196,7 +203,8 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
     return cycloneDictionary;
 }
 
-export function findNearestDatetimeIndex(sortedStacItems: STACItem[], targetDatetime: string) {
+export function findNearestDatetimeSTACIndex(sortedStacItems: STACItem[], targetDatetime: string) {
+    // Given a list of sorted stac items, return the nearest stac item based on the target datetime.
     let l=0;
     let r=sortedStacItems.length - 1;
 
@@ -243,6 +251,55 @@ export function findNearestDatetimeIndex(sortedStacItems: STACItem[], targetDate
     return nearestNeighborIdx;
 }
 
+
+export function findNearestDatetimeIndex(sortedDatetime: DateTime[], targetDatetime: string) {
+    // Given a list of sorted datetime, return the nearest datetime based on the target datetime.
+    let l=0;
+    let r=sortedDatetime.length - 1;
+
+    const momentTargetDatetime = moment.utc(targetDatetime, 'YYYY-MM-DD HH:mm:ss'); // ignore the timezone information that might be 
+    // attached with the target datetime and treat it as utc offset. Its for a fair comparision as the datasets datetime is in UTC.
+    let momentLeftIdxDatetime = moment(sortedDatetime[l]);
+    let momentRightIdxDatetime = moment(sortedDatetime[r]);
+
+    // edge cases
+    if (momentTargetDatetime <= momentLeftIdxDatetime) {
+        return l;
+    }
+    if (momentTargetDatetime >= momentRightIdxDatetime) {
+        return r;
+    }
+
+    let minNearestNeighbourScore = Infinity;
+    let nearestNeighborIdx = 0;
+
+    while (l <= r) {
+        const mid = Math.floor((r + l) / 2);
+        const midDatetime = sortedDatetime[mid];
+        const momentMidDatetime = moment(midDatetime);
+
+        if (momentMidDatetime === momentTargetDatetime) {
+            return mid;
+        }
+        // else
+        if (momentTargetDatetime < momentMidDatetime) {
+            // go left
+            r = mid-1;
+        } else {
+            // go right
+            l = mid+1
+        }
+        // also find the nearest neighbour (in the context of datetime)
+        let neighbourScore = Math.abs(momentTargetDatetime.diff(momentMidDatetime));
+        if (neighbourScore < minNearestNeighbourScore) {
+            minNearestNeighbourScore = neighbourScore;
+            nearestNeighborIdx = mid;
+        }
+    }
+    // if no exact match found
+    return nearestNeighborIdx;
+}
+
 export function findWindowIndex(sortedDatetime: DateTime[], targetDatetime: string ): [number, number] {
     if (!sortedDatetime.length || !targetDatetime) {
         return [-1, -1];
@@ -251,15 +308,28 @@ export function findWindowIndex(sortedDatetime: DateTime[], targetDatetime: stri
     let left = 0;
     let right = sortedDatetime.length - 1;
 
-    if (moment(targetDatetime).isBefore(sortedDatetime[left], "day") || moment(targetDatetime).isAfter(sortedDatetime[right], "day")) {
+    if (moment(targetDatetime).isBefore(sortedDatetime[left]) || moment(targetDatetime).isAfter(sortedDatetime[right])) {
         return [-1, -1];
     }
 
-    while (moment(sortedDatetime[left]).isBefore(targetDatetime, "day")) {
+    while (moment(sortedDatetime[left]).isBefore(targetDatetime)) {
         left += 1;
     }
-    while (moment(sortedDatetime[right]).isAfter(moment(targetDatetime).add(1, "day"), "day")) {
+    while (moment(sortedDatetime[right]).isAfter(moment(targetDatetime).add(1, "day"))) {
         right -= 1;
     }
+
+    let offsets = 3;
+
+    left -= offsets;
+    right += offsets;
+
+    if (left <= 0) {
+        left = 0
+    }
+    if (right > sortedDatetime.length - 1) {
+        right = sortedDatetime.length - 1
+    }
+
     return [left, right];
 }
