@@ -73,7 +73,7 @@ export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClic
     return null;
 }
 
-const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) => {
+export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) => {
     const { map } = useMapbox();
 
     useEffect(() => {
@@ -129,7 +129,8 @@ const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) => {
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [map, dataProducts, dataProductId, datasetType]);
+    }, [JSON.stringify(dataProducts), dataProductId, datasetType]);
+    // Note: JSON stringify used to do deep comparision and avoid shallow comparision. Hence to avoid un-necessary re-renders
 
     return null;
 }
