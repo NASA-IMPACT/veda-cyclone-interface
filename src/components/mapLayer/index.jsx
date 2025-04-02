@@ -95,8 +95,20 @@ const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) => {
             addSourcePolygonToMap(map, featureCollection, polygonSourceId, polygonLayerId, dataProductId)
         }
 
+        // Additionally
+        let dataProductSwathLayerId = "";
+        let dataProductSwathSourceId = "";
+        if (dataProductId.includes("swath")) {
+            // add a line on the border.
+            let swathIdentifier = "-swath-boundary";
+            dataProductSwathSourceId = polygonSourceId+swathIdentifier;
+            dataProductSwathLayerId = polygonLayerId+swathIdentifier;
+            addSourceLineToMap(map, featureCollection, dataProductSwathSourceId, dataProductSwathLayerId, dataProductId);
+        }
+
         const onClickHandler = (e) => {
             // handleLayerClick(plumeId);
+            // console.log("features-->", e.features, "--", dataProductId)
         }
 
         const onHoverHandler = (e) => {
@@ -111,6 +123,8 @@ const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) => {
             if (map) {
                 if (layerExists(map, polygonLayerId)) map.removeLayer(polygonLayerId);
                 if (sourceExists(map, polygonSourceId)) map.removeSource(polygonSourceId);
+                if (dataProductSwathLayerId && layerExists(map, dataProductSwathLayerId)) map.removeLayer(dataProductSwathLayerId);
+                if (dataProductSwathSourceId && sourceExists(map, dataProductSwathSourceId)) map.removeSource(dataProductSwathSourceId);
                 map.off("click", "clusters", onClickHandler);
             }
         }

@@ -126,6 +126,9 @@ function getLineColor(dataProductId) {
 function getLineStrokeWidth(dataProductId) {
     if (dataProductId.includes("public.path_line")) {
         return 6
+    }
+    if (dataProductId.includes("swath")) {
+        return 4
     } else {
         return 2
     }
