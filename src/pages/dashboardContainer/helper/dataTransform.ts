@@ -203,6 +203,9 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
     return cycloneDictionary;
 }
 
+// NOTE: All the below binary search could be made DRY code. However, if the data have to be linearly scanned/filtered once before feeding it to a binary search then the binary search is meaningless. with big O tending to O(n) instead of O(log(n))
+// Find better way of making the binary search code DRY.
+
 export function findNearestDatetimeSTACIndex(sortedStacItems: STACItem[], targetDatetime: string) {
     // Given a list of sorted stac items, return the nearest stac item based on the target datetime.
     let l=0;
