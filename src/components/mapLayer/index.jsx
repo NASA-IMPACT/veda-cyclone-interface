@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import moment from "moment";
 import { useMapbox } from "../../context/mapContext";
 import { addSourceLayerToMap, addSourcePointToMap, addSourceLineToMap, addSourcePolygonToMap, getSourceId, getLayerId, layerExists, sourceExists } from "../../utils";
 
@@ -106,14 +108,71 @@ export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) 
             addSourceLineToMap(map, featureCollection, dataProductSwathSourceId, dataProductSwathLayerId, dataProductId);
         }
 
+        let popupElem = "";
         const onClickHandler = (e) => {
+            if (popupElem) popupElem.remove();
+            if (!(dataProductId.includes("swath") || dataProductId.includes("public.path_point"))) return;
             // handleLayerClick(plumeId);
-            // console.log("features-->", e.features, "--", dataProductId)
+            const el = document.createElement('div');
+            popupElem = el;
+            el.className = 'marker';
+
+            const { lng, lat } = e.lngLat;
+            const resultHTML = getResultHtml(e.features, dataProductId);
+            console.log(resultHTML)
+            addTooltip(el, lng, lat, resultHTML);
+        }
+
+        const getResultHtml = (features, dataProductId) => {
+            if (!features?.length || !dataProductId) return "<div></div>"
+            const feature = features[0];
+            if (dataProductId.includes("swath")) {
+                return `
+                    <div style="word-wrap: break-word;">
+                        <div>Start Date: ${moment(feature.properties.time_start).utc().format("MM/DD/YYYY, HH:mm:ss")} (UTC)</div>
+                        <div>End Date: ${moment(feature.properties.time_end).utc().format("MM/DD/YYYY, HH:mm:ss")} (UTC)</div>
+                        <div>Producer Granule Id: ${feature.properties.producer_granule_id}</div>
+                    </div>
+                `;
+            }
+            if (dataProductId.includes("public.path_point")) {
+                return `
+                    <div style="word-wrap: break-word;">
+                        <div>Date Time: ${moment(feature.properties.datetime).utc().format("MM/DD/YYYY, HH:mm:ss")} (UTC)</div>
+                        <div>Category: ${feature.properties.category}</div>
+                    </div>
+                    `;
+            }
+            return '<div></div>';
+            // default
+            // let result = "<div>"
+            // Object.keys(features[0].properties).forEach(prop => {
+            //     result += "<div>"+ prop + ":" + features[0].properties[prop] + "</div>"
+            // })
+            // result += "</div>"
+            // return result;
         }
 
         const onHoverHandler = (e) => {
             // setHoveredPlumeId(plumeId);
         }
+
+        let popup = "";
+        const addTooltip = (element, longitude, latitude, text) => {
+            let marker = new mapboxgl.Marker(element)
+            .setLngLat([longitude, latitude])
+            .addTo(map);
+
+            const tooltipContent = text;
+            popup = new mapboxgl.Popup({
+                closeButton: false,
+                anchor: 'bottom'
+            }).setHTML(tooltipContent);
+            marker.setPopup(popup);
+            popup.addTo(map);
+            // popup.remove() //TODO: do this on another click.
+            return marker;
+          }
 
         map.on("click", polygonLayerId, onClickHandler);
         map.on("mousemove", polygonLayerId, onHoverHandler);
@@ -125,6 +184,7 @@ export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) 
                 if (sourceExists(map, polygonSourceId)) map.removeSource(polygonSourceId);
                 if (dataProductSwathLayerId && layerExists(map, dataProductSwathLayerId)) map.removeLayer(dataProductSwathLayerId);
                 if (dataProductSwathSourceId && sourceExists(map, dataProductSwathSourceId)) map.removeSource(dataProductSwathSourceId);
+                if (popup) popup.remove();
                 map.off("click", "clusters", onClickHandler);
             }
         }
