@@ -160,7 +160,7 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
             representationalAsset: items[0],
             subDailyAssets: [...sortedItems],
             datetimes: datetimes,
-            getAsset: (dateTime: string) => {
+            getAsset: dataProductName.includes("swath") ? (dateTime: string) => { // TODO: Refactor this to be easily integretable
                 if (!dateTime || !cycloneShapeDataset.datetimes.length) return cycloneShapeDataset.subDailyAssets;
                 const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might be attached with the target datetime
                 const index = findNearestDatetimeIndex(cycloneShapeDataset.datetimes, dateTimeNoTimezone)
@@ -173,6 +173,15 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
                 if (endIndex > cycloneShapeDataset.datetimes.length - 1) {
                     endIndex = cycloneShapeDataset.datetimes.length - 1
                 }
+                const assetsForDateTime: PolygonAsset[] | LineStringAsset[] | PointAsset[] = cycloneShapeDataset.subDailyAssets.slice(startIndex, endIndex+1);
+                return assetsForDateTime;
+            } :
+            (dateTime: string) => {
+                if (!dateTime || !cycloneShapeDataset.datetimes.length) return cycloneShapeDataset.subDailyAssets;
+                const dateTimeNoTimezone = moment(dateTime).format('YYYY-MM-DD HH:mm:ss'); // remove the timezone information that might
+                // be attached with the target datetime
+                const [ startIndex, endIndex ] = findWindowIndex(cycloneShapeDataset.datetimes, dateTimeNoTimezone)
+                if (startIndex === -1 || endIndex === -1) return [];
                 const assetsForDateTime: PolygonAsset[] | LineStringAsset[] | PointAsset[] = cycloneShapeDataset.subDailyAssets.slice(startIndex, endIndex+1);
                 return assetsForDateTime;
             }
@@ -253,7 +262,6 @@ export function findNearestDatetimeSTACIndex(sortedStacItems: STACItem[], target
     // if no exact match found
     return nearestNeighborIdx;
 }
-
 
 export function findNearestDatetimeIndex(sortedDatetime: DateTime[], targetDatetime: string) {
     // Given a list of sorted datetime, return the nearest datetime based on the target datetime.
