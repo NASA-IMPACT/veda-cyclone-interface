@@ -50,9 +50,9 @@ jobs:
           # Check for required variables
           [ -z "${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}" ] && missing_vars+=("secrets.REACT_APP_MAPBOX_ACCESS_TOKEN")
           [ -z "${{ secrets.REACT_APP_MAPBOX_STYLE_URL }}" ] && missing_vars+=("secrets.REACT_APP_MAPBOX_STYLE_URL")
-          [ -z "${{ vars.REACT_APP_BASE_PATH }}" ] && missing_vars+=("vars.REACT_APP_BASE_PATH")
-          [ -z "${{ secrets.DEPLOYMENT_BUCKET }}" ] && missing_vars+=("secrets.DEPLOYMENT_BUCKET")
-          [ -z "${{ secrets.DEPLOYMENT_REGION }}" ] && missing_vars+=("secrets.DEPLOYMENT_REGION")
+          [ -z "${{ vars.PUBLIC_URL }}" ] && missing_vars+=("vars.PUBLIC_URL")
+          [ -z "${{ vars.DEPLOYMENT_BUCKET }}" ] && missing_vars+=("vars.DEPLOYMENT_BUCKET")
+          [ -z "${{ vars.DEPLOYMENT_REGION }}" ] && missing_vars+=("vars.DEPLOYMENT_REGION")
           [ -z "${{ secrets.DEPLOYMENT_ROLE_ARN }}" ] && missing_vars+=("secrets.DEPLOYMENT_ROLE_ARN")
           [ -z "${{ secrets.CF_DISTRIBUTION_ID }}" ] && missing_vars+=("secrets.CF_DISTRIBUTION_ID")
 
@@ -69,8 +69,7 @@ jobs:
         env:
           REACT_APP_MAPBOX_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
           REACT_APP_MAPBOX_STYLE_URL: ${{ secrets.REACT_APP_MAPBOX_STYLE_URL }}
-          PUBLIC_URL: ${{ vars.REACT_APP_BASE_PATH }}
-          REACT_APP_BASE_PATH: ${{ vars.REACT_APP_BASE_PATH }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
           REACT_APP_STAC_API_URL: ${{ vars.REACT_APP_STAC_API_URL }}
           REACT_APP_RASTER_API_URL: ${{ vars.REACT_APP_RASTER_API_URL }}
           REACT_APP_FEATURES_API_URL: ${{ vars.REACT_APP_FEATURES_API_URL }}
@@ -112,15 +111,15 @@ jobs:
         with:
           role-to-assume: ${{ secrets.DEPLOYMENT_ROLE_ARN }}
           role-session-name: ${{ github.repository_owner}}
-          aws-region: ${{ secrets.DEPLOYMENT_REGION }}
+          aws-region: ${{ vars.DEPLOYMENT_REGION }}
       
       - name: Upload to S3
         run: |
-          aws s3 sync "./build" s3://${{ secrets.DEPLOYMENT_BUCKET }} --cache-control max-age=30,must-revalidate,s-maxage=604800 --delete
+          aws s3 sync "./build" s3://${{ vars.DEPLOYMENT_BUCKET }}${{ vars.PUBLIC_URL}} --cache-control max-age=30,must-revalidate,s-maxage=604800 --delete
 
       - name: Request Invalidation to AWS Cloudfront
         uses: oneyedev/aws-cloudfront-invalidation@v1
         with:
           distribution-id: ${{ secrets.CF_DISTRIBUTION_ID }}
           paths: |
-            /custom-interfaces/cyclone-interface
+            ${{ vars.PUBLIC_URL }}
