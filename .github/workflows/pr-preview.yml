@@ -10,7 +10,6 @@ concurrency:
 
 env:
   S3_BUCKET: ${{ vars.DEPLOYMENT_BUCKET }}
-  WEB_DISTRIBUTION_URL: ${{ vars.PREVIEW_WEB_DISTRIBUTION_URL }}
   PR_STRING: pr-preview-${{ github.event.number }}
 
 jobs:
@@ -46,9 +45,10 @@ jobs:
           # Check for required variables
           [ -z "${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}" ] && missing_vars+=("secrets.REACT_APP_MAPBOX_ACCESS_TOKEN")
           [ -z "${{ secrets.REACT_APP_MAPBOX_STYLE_URL }}" ] && missing_vars+=("secrets.REACT_APP_MAPBOX_STYLE_URL")
-          [ -z "${{ vars.REACT_APP_BASE_PATH }}" ] && missing_vars+=("vars.REACT_APP_BASE_PATH")
-          [ -z "${{ secrets.DEPLOYMENT_BUCKET }}" ] && missing_vars+=("secrets.DEPLOYMENT_BUCKET")
-          [ -z "${{ secrets.DEPLOYMENT_REGION }}" ] && missing_vars+=("secrets.DEPLOYMENT_REGION")
+          [ -z "${{ vars.PUBLIC_URL }}" ] && missing_vars+=("vars.PUBLIC_URL")
+          # note: vars.PUBLIC_URL is expected to have leading and trailing /
+          [ -z "${{ vars.DEPLOYMENT_BUCKET }}" ] && missing_vars+=("vars.DEPLOYMENT_BUCKET")
+          [ -z "${{ vars.DEPLOYMENT_REGION }}" ] && missing_vars+=("vars.DEPLOYMENT_REGION")
           [ -z "${{ secrets.DEPLOYMENT_ROLE_ARN }}" ] && missing_vars+=("secrets.DEPLOYMENT_ROLE_ARN")
           [ -z "${{ secrets.CF_DISTRIBUTION_ID }}" ] && missing_vars+=("secrets.CF_DISTRIBUTION_ID")
 
@@ -72,8 +72,7 @@ jobs:
         env:
           REACT_APP_MAPBOX_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
           REACT_APP_MAPBOX_STYLE_URL: ${{ secrets.REACT_APP_MAPBOX_STYLE_URL }}
-          PUBLIC_URL: ${{ vars.REACT_APP_BASE_PATH }}
-          REACT_APP_BASE_PATH: ${{ vars.REACT_APP_BASE_PATH }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
           REACT_APP_STAC_API_URL: ${{ vars.REACT_APP_STAC_API_URL }}
           REACT_APP_RASTER_API_URL: ${{ vars.REACT_APP_RASTER_API_URL }}
           REACT_APP_FEATURES_API_URL: ${{ vars.REACT_APP_FEATURES_API_URL }}
@@ -81,8 +80,8 @@ jobs:
           yarn
           CI=false yarn build
           cd ..
-          aws s3 sync build s3://${{ env.S3_BUCKET }}/pr-preview-${{ github.event.number }}
-          COMMENT+="- 🛰️ Pr-Preview on : ${{ env.S3_BUCKET }}/pr-preview-${{ github.event.number }}/ \n \n"
+          aws s3 sync build s3://${{ env.S3_BUCKET }}${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}
+          COMMENT+="- 🛰️ Pr-Preview on : ${{ vars.PREVIEW_WEB_DISTRIBUTION_URL }}${{ vars.PUBLIC_URL }}/ \n \n"
           echo "COMMENT=${COMMENT}" >> $GITHUB_ENV
 
       - name: Add/update PR comment
@@ -104,7 +103,7 @@ jobs:
         with:
           distribution-id: ${{ secrets.CF_DISTRIBUTION_ID }}
           paths: |
-            /ghgcenter/custom-interfaces/*
+            ${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}
 
   clean_up:
     if: ${{ github.event.action == 'closed' }}
@@ -126,7 +125,7 @@ jobs:
 
       - name: Delete built websites from S3
         run: |
-          aws s3 rm s3://${{ env.S3_BUCKET }}/${{ env.PR_STRING }}/ --recursive
+          aws s3 rm s3://${{ env.S3_BUCKET }}${{ vars.PUBLIC_URL }}${{ env.PR_STRING }}/ --recursive
 
       - name: Remove PR comment
         run: |
