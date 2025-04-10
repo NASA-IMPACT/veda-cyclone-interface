@@ -73,7 +73,7 @@ jobs:
         env:
           REACT_APP_MAPBOX_TOKEN: ${{ secrets.REACT_APP_MAPBOX_ACCESS_TOKEN }}
           REACT_APP_MAPBOX_STYLE_URL: ${{ secrets.REACT_APP_MAPBOX_STYLE_URL }}
-          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}
           REACT_APP_STAC_API_URL: ${{ vars.REACT_APP_STAC_API_URL }}
           REACT_APP_RASTER_API_URL: ${{ vars.REACT_APP_RASTER_API_URL }}
           REACT_APP_FEATURES_API_URL: ${{ vars.REACT_APP_FEATURES_API_URL }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Delete built websites from S3
         run: |
-          aws s3 rm s3://${{ env.S3_BUCKET }}${{ vars.PUBLIC_URL }}${{ env.PR_STRING }}/ --recursive
+          aws s3 rm s3://${{ env.S3_BUCKET }}${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}/ --recursive
 
       - name: Remove PR comment
         run: |
