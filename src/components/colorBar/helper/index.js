@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-const COLOR_MAP = {
+export const COLOR_MAP = {
     rdylgn: d3.interpolateRdYlGn, //imerg
     turbo: d3.interpolateTurbo, //sst
     bupu_r: (t) => d3.interpolateBuPu(1-t), //viirs,modis // todo: review
@@ -14,7 +14,7 @@ const COLOR_MAP = {
     default: d3.interpolatePlasma
 }
 
-export const createColorbar = (colorbar, VMIN=-92, VMAX=100, STEP=30, colorMap="default") => {
+export const createColorbar = (colorbar, VMIN=-92, VMAX=100, STEP=30, colorMap="default", skipStep=false) => {
     // Create a color scale using D3
     const colorScale = d3
         .scaleSequential(COLOR_MAP[colorMap])
@@ -32,6 +32,10 @@ export const createColorbar = (colorbar, VMIN=-92, VMAX=100, STEP=30, colorMap="
         .attr("width", "100%") // Adjust the width of each color segment
         .attr("x", (d, i) => i * 3)
         .attr("fill", (d) => colorScale(d));
+
+    if (skipStep) {
+        return;
+    }
 
     // Define custom scale labels
     const scaleLabels = generateScale(VMIN, VMAX, STEP);
