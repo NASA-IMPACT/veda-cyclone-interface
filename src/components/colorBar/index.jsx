@@ -16,7 +16,7 @@ export const ColorBar = ({VMIN, VMAX, STEP, colorMap, skipStep=false, skipLabel=
         return () => {
             colorbar.selectAll("*").remove();
         }
-    }, []);
+    }, [VMIN, VMAX, STEP, colorMap, skipStep, skipLabel]);
 
     return (
         <div id="colorbar">

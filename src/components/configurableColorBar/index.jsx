@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {  
   Accordion,
   AccordionSummary,
@@ -10,6 +12,10 @@ import { ColormapOptions } from './colormapOptions';
 import { ColorBar } from '../colorBar';
 
 export const ConfigurableColorBar = ({ VMIN, VMAX, colorMap }) => {
+  const [currVMIN, setCurrVMIN] = useState(VMIN);
+  const [currVMAX, setCurrVMAX] = useState(VMAX);
+  const [currColorMap, setCurrColorMap] = useState(colorMap);
+
   return (
     <Accordion>
       <AccordionSummary
@@ -18,10 +24,10 @@ export const ConfigurableColorBar = ({ VMIN, VMAX, colorMap }) => {
         id="panel1-header"
       >
         <ColorBar
-          VMIN={VMIN}
-          VMAX={VMAX}
-          colorMap={colorMap}
-          STEP={(VMAX-VMIN)/5}
+          VMIN={currVMIN}
+          VMAX={currVMAX}
+          colorMap={currColorMap}
+          STEP={(currVMAX-currVMIN)/5}
         />
       </AccordionSummary>
       <AccordionDetails>
@@ -29,6 +35,9 @@ export const ConfigurableColorBar = ({ VMIN, VMAX, colorMap }) => {
           VMIN={VMIN}
           VMAX={VMAX}
           colorMap={colorMap}
+          setCurrVMAX={setCurrVMAX}
+          setCurrVMIN={setCurrVMIN}
+          setCurrColorMap={setCurrColorMap}
         />
       </AccordionDetails>
     </Accordion>

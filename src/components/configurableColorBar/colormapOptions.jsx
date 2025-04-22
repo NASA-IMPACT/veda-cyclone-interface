@@ -13,7 +13,7 @@ import { ColorBar } from '../colorBar';
 import { COLOR_MAP } from '../colorBar/helper';
 
 
-export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
+export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN, setCurrColorMap}) => {
   // State for the input values
   const [minValue, setMinValue] = useState(VMIN);
   const [maxValue, setMaxValue] = useState(VMAX);
@@ -25,6 +25,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
       setMinValue(value);
+      setCurrVMIN(value);
     }
   };
   
@@ -32,7 +33,10 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
   const handleSliderChange = (event, newValue) => {
     const [ leftVal, rightVal ] = newValue;
     setMaxValue(rightVal);
+    setCurrVMAX(rightVal);
+
     setMinValue(leftVal);
+    setCurrVMIN(leftVal);
   };
   
   // Handle changes to the max input value
@@ -40,6 +44,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
       setMaxValue(value);
+      setCurrVMAX(value);
     }
   };
   
@@ -51,6 +56,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
   // Handle selecting a colorbar
   const handleColorbarClick = (name) => {
     setSelectedColorbar(name);
+    setCurrColorMap(name);
   };
   
   return (
