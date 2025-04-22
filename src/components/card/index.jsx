@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { ColorBar } from '../colorBar';
 import { ScatterometerLegend, BestTrackPointLegend, BestTrackLineLegend, WindSwathLegend } from './helper';
 import { ColormapOptions } from "../configurableColorBar"
+import { ConfigurableColorBar } from "../configurableColorBar";
 
 import "./index.css";
 
@@ -135,12 +136,11 @@ export function DetailedPlumeCard({ id, title, description, citation, atbd, refe
                     })
                 }
                  <HorizontalLayout/>
-                {isVector ? <GetVectorColorBar id={id}/> : <HorizontalLayout>
-                    <div>
-                        <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorMap}/>
-                        <ColormapOptions VMIN={VMIN} VMAX={VMAX} colorMap={colorMap}></ColormapOptions>
-                    </div>
-                </HorizontalLayout>
+                {isVector ?
+                    <GetVectorColorBar id={id}/> :
+                    <HorizontalLayout>
+                        <ConfigurableColorBar VMIN={VMIN} VMAX={VMAX} colorMap={colorMap}/>
+                    </HorizontalLayout>
                 }
             </CardContent>
             </Box>
