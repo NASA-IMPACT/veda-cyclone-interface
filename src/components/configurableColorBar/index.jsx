@@ -11,10 +11,23 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ColormapOptions } from './colormapOptions';
 import { ColorBar } from '../colorBar';
 
-export const ConfigurableColorBar = ({ VMIN, VMAX, colorMap }) => {
+export const ConfigurableColorBar = ({ id, VMIN, VMAX, colorMap, dataProductBasedColorMap, setDataProductBasedColorMap }) => {
   const [currVMIN, setCurrVMIN] = useState(VMIN);
   const [currVMAX, setCurrVMAX] = useState(VMAX);
   const [currColorMap, setCurrColorMap] = useState(colorMap);
+
+  useEffect(() => {
+    // key == dataProduct
+    // id == dataProduct + selectedCycloneId
+    let v = { ...dataProductBasedColorMap }
+    v[id] = { // should we base it off id, or key??? `dataProduct` (key) was used previously for the opacity
+      colorMap: currColorMap,
+      VMIN: currVMIN,
+      VMAX: currVMAX
+    }
+    setDataProductBasedColorMap(v)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currVMIN, currVMAX, currColorMap])
 
   return (
     <Accordion>
