@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
 import { createColorbar } from "./helper";
@@ -20,13 +19,13 @@ export const ColorBar = ({VMIN, VMAX, STEP, colorMap, skipStep=false, skipLabel=
     }, []);
 
     return (
-        <Card id="colorbar">
+        <div id="colorbar">
             <div ref={colorBarScale} className="colorbar-scale"></div>
             {
                 !skipLabel && <Typography variant="subtitle2" gutterBottom sx={{ width: "40%" }} className="colorbar-label">
                     {colorMap}
                 </Typography>
             }
-        </Card>
+        </div>
     )
 }

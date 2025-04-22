@@ -5,7 +5,8 @@ import {
   Slider, 
   TextField, 
   Switch,
-  Grid
+  Grid,
+  Card
 } from '@mui/material';
 
 import { ColorBar } from '../colorBar';
@@ -135,7 +136,9 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
             p: selectedColorbar === colorbarName ? 1 : 0,
           }}
         >
-          <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorbarName} skipStep skipLabel={false}/>
+          <Card>
+            <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorbarName} skipStep skipLabel={false}/>
+          </Card>
         </Box>
       )})}
     </Box>
