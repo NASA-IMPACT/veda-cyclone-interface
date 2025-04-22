@@ -54,7 +54,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap}) => {
   };
   
   return (
-    <Box sx={{ p: 2, maxWidth: 350, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+    <Box sx={{ p: 2, maxWidth: 350, border: "1px solid #f5f5f5", borderRadius: 1 }}>
       <Typography fontWeight="medium" gutterBottom>
         Colormap options
       </Typography>
