@@ -119,6 +119,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
                 value={minValue}
                 onChange={handleMinInputChange}
                 size="small"
+                type="number"
                 fullWidth
               />
             </Tooltip>
@@ -158,6 +159,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
                 value={maxValue}
                 onChange={handleMaxInputChange}
                 size="small"
+                type="number"
                 fullWidth
               />
             </Tooltip>
