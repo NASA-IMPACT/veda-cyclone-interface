@@ -19,14 +19,22 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
   const [maxValue, setMaxValue] = useState(VMAX);
   const [reverse, setReverse] = useState(false);
   const [selectedColorbar, setSelectedColorbar] = useState(colorMap);
+  const [error, setError] = useState(false);
   
   // Handle changes to the min input value
   const handleMinInputChange = (event) => {
     const value = parseFloat(event.target.value);
-    if (!isNaN(value)) {
-      setMinValue(value);
-      setCurrVMIN(value);
-    }
+
+    if (isNaN(value)) return;
+
+    if ((maxValue - value) <= 0) {
+      setError(true)
+      return;
+    } // error message.
+
+    setError(false);
+    setMinValue(value);
+    setCurrVMIN(value);
   };
   
   // Handle changes to the slider
@@ -34,6 +42,9 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
     const [ leftVal, rightVal ] = newValue;
 
     if (leftVal === rightVal) return;
+
+    if (rightVal > leftVal) setError(false);
+
     setMaxValue(rightVal);
     setCurrVMAX(rightVal);
     setMinValue(leftVal);
@@ -65,10 +76,16 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
   // Handle changes to the max input value
   const handleMaxInputChange = (event) => {
     const value = parseFloat(event.target.value);
-    if (!isNaN(value)) {
-      setMaxValue(value);
-      setCurrVMAX(value);
-    }
+    if (isNaN(value)) return;
+
+    if ((value - minValue) <= 0) {
+      setError(true)
+      return;
+    } // error message.
+
+    setError(false);
+    setMaxValue(value);
+    setCurrVMAX(value);
   };
   
   // Handle toggling the reverse switch
@@ -113,6 +130,8 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
               size="small"
               sx={{ 
                 width: '100%',
+                marginLeft: '5px',
+                marginRight: '5px',
                 // Custom styling to match the image
                 '& .MuiSlider-rail': {
                   height: 2,
@@ -140,7 +159,11 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
           </Grid>
         </Grid>
       </Box>
-      
+
+      {error && <Typography variant="caption" gutterBottom sx={{ display: 'block', color: "red" }}>Min should be smaller than Max recale.</Typography>}
+
+      <hr/>
+
       {/* Reverse toggle */}
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
         <Typography variant="body2" sx={{ flex: 1 }}>
