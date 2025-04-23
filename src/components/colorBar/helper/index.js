@@ -2,15 +2,23 @@ import * as d3 from "d3";
 
 export const COLOR_MAP = {
     rdylgn: d3.interpolateRdYlGn, //imerg
+    rdylgn_r: (t) => d3.interpolateRdYlGn(1-t), //imerg
     turbo: d3.interpolateTurbo, //sst
-    bupu_r: (t) => d3.interpolateBuPu(1-t), //viirs,modis // todo: review
-    viridis: d3.interpolateViridis, //cygnss // todo: review
+    turbo_r: (t) => d3.interpolateTurbo(1-t), //sst
+    bupu: d3.interpolateBuPu, //viirs,modis
+    bupu_r: (t) => d3.interpolateBuPu(1-t), //viirs,modis
+    viridis: d3.interpolateViridis, //cygnss
+    viridis_r: (t) => d3.interpolateViridis(1-t), //cygnss
     greys: d3.interpolateGreys, // goes 8
-    greys_r: (t) => d3.interpolateGreys(1-t), //goes02 (reversed)
-    cubehelix: (t) => d3.interpolateCubehelixDefault(t), //goes13 // todo: review
+    greys_r: (t) => d3.interpolateGreys(1-t), //goes02
+    cubehelix: (t) => d3.interpolateCubehelixDefault(t), //goes13
+    cubehelix_r: (t) => d3.interpolateCubehelixDefault(1-t), //goes13
     magma: d3.interpolateMagma,
+    magma_r: (t) => d3.interpolateMagma(1-t),
     reds: d3.interpolateReds,
+    reds_r: (t) => d3.interpolateReds(1-t),
     gist_earth: (t) => d3.interpolateGreys(1-t), // (reversed)
+    gist_earth_r: d3.interpolateGreys, // (reversed)
     default: d3.interpolatePlasma
 }
 
