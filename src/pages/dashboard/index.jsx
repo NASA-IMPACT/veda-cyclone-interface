@@ -58,10 +58,6 @@ export function Dashboard({ dataTreeCyclone, cyclones, dataProducts, zoomLocatio
   const [ selectedDataProductIdsOpacity, setSelectedDataProductIdsOpacity ] = useState({}); // [key: string(dataProductId)]: number
   const [ dataProductBasedColorMap, setDataProductBasedColorMap ] = useState({}); // For configurable colormap -> [key: string(dataProductId)]: { colorMap: string; vmin: string, vmax: string }
 
-  useEffect(() => {
-    console.log("+++>>>>", dataProductBasedColorMap)
-  }, [dataProductBasedColorMap])
-
   const [startDate, setStartDate] = useState(moment(BERYL_START_DATETIME).format()); // TODO: get this time based on the selected cyclone.
 
   // for animation
