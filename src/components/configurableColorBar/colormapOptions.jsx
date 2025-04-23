@@ -13,7 +13,7 @@ import { ColorBar } from '../colorBar';
 import { COLOR_MAP } from '../colorBar/helper';
 
 
-export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN, setCurrColorMap}) => {
+export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN, setCurrColorMap, setIsReverse}) => {
   // State for the input values
   const [minValue, setMinValue] = useState(VMIN);
   const [maxValue, setMaxValue] = useState(VMAX);
@@ -51,6 +51,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
   // Handle toggling the reverse switch
   const handleReverseChange = (event) => {
     setReverse(event.target.checked);
+    setIsReverse(event.target.checked);
   };
   
   // Handle selecting a colorbar
@@ -129,7 +130,10 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
       </Box>
       
       {/* Colorbar list */}
-      {Object.keys(COLOR_MAP).map((colorbarName) => {
+      {Object.keys(COLOR_MAP).filter((elem) => {
+        if (elem.includes("default")) return false;
+        return !elem.includes("_r")
+      }).map((colorbarName) => {
         return (
         <Box 
           key={colorbarName}
