@@ -6,7 +6,8 @@ import {
   TextField, 
   Switch,
   Grid,
-  Card
+  Card,
+  Tooltip
 } from '@mui/material';
 
 import { ColorBar } from '../colorBar';
@@ -113,12 +114,14 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
         </Typography>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs={3}>
-            <TextField
-              value={minValue}
-              onChange={handleMinInputChange}
-              size="small"
-              fullWidth
-            />
+            <Tooltip title={minValue}>
+              <TextField
+                value={minValue}
+                onChange={handleMinInputChange}
+                size="small"
+                fullWidth
+              />
+            </Tooltip>
           </Grid>
           <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center' }}>
             <Slider
@@ -150,12 +153,14 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
             />
           </Grid>
           <Grid item xs={3}>
-            <TextField
-              value={maxValue}
-              onChange={handleMaxInputChange}
-              size="small"
-              fullWidth
-            />
+            <Tooltip title={maxValue}>
+              <TextField
+                value={maxValue}
+                onChange={handleMaxInputChange}
+                size="small"
+                fullWidth
+              />
+            </Tooltip>
           </Grid>
         </Grid>
       </Box>
