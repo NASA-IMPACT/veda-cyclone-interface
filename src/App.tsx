@@ -7,14 +7,12 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 import './App.css';
 
-const BASE_PATH = process.env.PUBLIC_URL;
-
 function App() {
   return (
     <Fragment>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterMoment}>
-        <BrowserRouter basename={BASE_PATH}>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
           <Routes>
             <Route path="/" element={<DashboardContainer />}>
             </Route>
