@@ -207,6 +207,7 @@ export function Dashboard({ dataTreeCyclone, cyclones, dataProducts, zoomLocatio
             selectedDataProductIds={selectedDataProductIds}
             startDate={startDate}
             selectedDataProductIdsOpacity={selectedDataProductIdsOpacity}
+            dataProductBasedColorMap={dataProductBasedColorMap}
           />
           <MapControls
             openDrawer={openDrawer}

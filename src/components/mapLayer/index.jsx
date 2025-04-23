@@ -1,31 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import moment from "moment";
 import { useMapbox } from "../../context/mapContext";
 import { addSourceLayerToMap, addSourcePointToMap, addSourceLineToMap, addSourcePolygonToMap, getSourceId, getLayerId, layerExists, sourceExists } from "../../utils";
 
-export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClick, plumeId, hoveredPlumeId, setHoveredPlumeId, startDate, opacity }) => {
+export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClick, layerId, hoveredLayerId, setHoveredPlumeId, startDate, opacity, dataProductBasedColorMap }) => {
     const { map } = useMapbox();
-    const [VMIN, VMAX] = rescale[0];
+    let [VMIN, VMAX] = rescale[0];
 
     useEffect(() => {
         if (!map || !dataProduct) return;
 
+        if (layerId in dataProductBasedColorMap) {
+            VMIN = dataProductBasedColorMap[layerId]?.VMIN;
+            VMAX = dataProductBasedColorMap[layerId]?.VMAX;
+            colormap = dataProductBasedColorMap[layerId]?.colorMap;
+        }
+
         const feature = dataProduct;
-        const rasterSourceId = getSourceId("raster"+plumeId);
-        const rasterLayerId = getLayerId("raster"+plumeId);
-        const polygonSourceId = getSourceId("polygon"+plumeId);
-        const polygonLayerId = getLayerId("polygon"+plumeId);
+        const rasterSourceId = getSourceId("raster"+layerId);
+        const rasterLayerId = getLayerId("raster"+layerId);
+        const polygonSourceId = getSourceId("polygon"+layerId);
+        const polygonLayerId = getLayerId("polygon"+layerId);
 
         addSourceLayerToMap(map, feature, rasterSourceId, rasterLayerId, VMIN, VMAX, colormap);
         map.setPaintProperty(rasterLayerId, "raster-opacity", opacity);
 
         const onClickHandler = (e) => {
-            // handleLayerClick(plumeId);
+            // handleLayerClick(layerId);
         }
 
         const onHoverHandler = (e) => {
-            // setHoveredPlumeId(plumeId);
+            // setHoveredPlumeId(layerId);
         }
 
         map.setLayoutProperty(rasterLayerId, 'visibility', 'visible');
@@ -43,15 +50,15 @@ export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClic
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataProduct, map, handleLayerClick, plumeId, setHoveredPlumeId, startDate]);
+    }, [dataProduct, map, handleLayerClick, layerId, setHoveredPlumeId, startDate, dataProductBasedColorMap]);
 
     useEffect(() => {
-        if (!map || !hoveredPlumeId || !plumeId ) return;
+        if (!map || !hoveredLayerId || !layerId ) return;
 
-        const polygonLayerId = getLayerId("polygon"+plumeId);
-        const rasterLayerId = getLayerId("raster"+plumeId);
+        const polygonLayerId = getLayerId("polygon"+layerId);
+        const rasterLayerId = getLayerId("raster"+layerId);
 
-        if (hoveredPlumeId !== plumeId) {
+        if (hoveredLayerId !== layerId) {
             // when the plume is not hovered
             if (layerExists(map, polygonLayerId)) {
                 map.setPaintProperty(polygonLayerId, 'fill-outline-color', '#20B2AA');
@@ -61,7 +68,7 @@ export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClic
             }
         }
 
-        if (hoveredPlumeId === plumeId) {
+        if (hoveredLayerId === layerId) {
             // when the plume is hovered
             if (layerExists(map, rasterLayerId)) {
                 map.moveLayer(rasterLayerId);
@@ -70,7 +77,7 @@ export const MapLayerRaster = ({ dataProduct, rescale, colormap, handleLayerClic
                 map.setPaintProperty(polygonLayerId, 'fill-outline-color', '#0000ff');
             }
         }
-    }, [hoveredPlumeId, map, plumeId]);
+    }, [hoveredLayerId, map, layerId]);
 
     return null;
 }
@@ -112,7 +119,7 @@ export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) 
         const onClickHandler = (e) => {
             if (popupElem) popupElem.remove();
             if (!(dataProductId.includes("swath") || dataProductId.includes("public.path_point"))) return;
-            // handleLayerClick(plumeId);
+            // handleLayerClick(layerId);
             const el = document.createElement('div');
             popupElem = el;
             el.className = 'marker';
@@ -154,7 +161,7 @@ export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) 
         }
 
         const onHoverHandler = (e) => {
-            // setHoveredPlumeId(plumeId);
+            // setHoveredPlumeId(layerId);
         }
 
         let popup = "";
@@ -195,7 +202,7 @@ export const MapAllVectorLayer = ({ dataProducts, dataProductId, datasetType }) 
     return null;
 }
 
-export const MapLayers = ({ dataTreeCyclone, startDate, hoveredPlumeId, handleLayerClick, setHoveredPlumeId, selectedCycloneId, selectedDataProductIds, selectedDataProductIdsOpacity }) => {
+export const MapLayers = ({ dataTreeCyclone, startDate, hoveredLayerId, handleLayerClick, setHoveredPlumeId, selectedCycloneId, selectedDataProductIds, selectedDataProductIdsOpacity, dataProductBasedColorMap }) => {
     const { map } = useMapbox();
     const [ rasterDataProducts, setRasterDataProducts ] = useState([]);
     const [ vectorDataProducts, setVectorDataProducts ] = useState([]);
@@ -205,7 +212,7 @@ export const MapLayers = ({ dataTreeCyclone, startDate, hoveredPlumeId, handleLa
         // use the map reference
         Object.keys(selectedDataProductIdsOpacity).forEach((dataProduct) => {
             const dataProductId = dataProduct + "-cyclone-" + selectedCycloneId;
-            // const plumeId = dataProductId
+            // const layerId = dataProductId
             const rasterLayerId = getLayerId("raster"+dataProductId);
             try {
                 if (layerExists(map, rasterLayerId)) {
@@ -242,15 +249,16 @@ export const MapLayers = ({ dataTreeCyclone, startDate, hoveredPlumeId, handleLa
         {rasterDataProducts?.length && rasterDataProducts.map((dataProduct) =>
             <MapLayerRaster
                 key={dataProduct.dataset.id}
-                plumeId={dataProduct.dataset.id}
+                layerId={dataProduct.dataset.id}
                 dataProduct={dataProduct.dataset.getAsset(startDate)}
                 rescale={dataProduct.rescale}
                 colormap={dataProduct.colormap}
                 handleLayerClick={handleLayerClick}
-                hoveredPlumeId={hoveredPlumeId}
+                hoveredLayerId={hoveredLayerId}
                 setHoveredPlumeId={setHoveredPlumeId}
                 opacity={selectedDataProductIdsOpacity[dataProduct.dataset.satellite]}
                 startDate={startDate}
+                dataProductBasedColorMap={dataProductBasedColorMap}
             >
             </MapLayerRaster>
         )}
