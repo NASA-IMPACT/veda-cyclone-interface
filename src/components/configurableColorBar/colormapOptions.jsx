@@ -30,13 +30,36 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
   };
   
   // Handle changes to the slider
-  const handleSliderChange = (event, newValue) => {
+  const handleSliderChange = (event, newValue, activeThumb) => {
     const [ leftVal, rightVal ] = newValue;
+
+    if (leftVal === rightVal) return;
     setMaxValue(rightVal);
     setCurrVMAX(rightVal);
-
     setMinValue(leftVal);
     setCurrVMIN(leftVal);
+
+    // const minDistance = (VMAX - VMIN)/20;
+    // if (rightVal - leftVal < minDistance) {
+    //   if (activeThumb === 0) {
+    //     const clamped = Math.min(leftVal, 100 - minDistance);
+    //     setMaxValue(clamped + minDistance);
+    //     setCurrVMAX(clamped + minDistance);
+    //     setMinValue(clamped);
+    //     setCurrVMIN(clamped);
+    //   } else {
+    //     const clamped = Math.max(rightVal, minDistance);
+    //     setMaxValue(clamped);
+    //     setCurrVMAX(clamped);
+    //     setMinValue(clamped - minDistance);
+    //     setCurrVMIN(clamped - minDistance);
+    //   }
+    // } else {
+    //   setMaxValue(rightVal);
+    //   setCurrVMAX(rightVal);
+    //   setMinValue(leftVal);
+    //   setCurrVMIN(leftVal);
+    // }
   };
   
   // Handle changes to the max input value
@@ -84,8 +107,9 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
             <Slider
               value={[minValue, maxValue]}
               onChange={handleSliderChange}
-              min={VMIN}
-              max={VMAX}
+              min={parseFloat(VMIN)}
+              max={parseFloat(VMAX)}
+              step={parseFloat((VMAX-VMIN)/20)}
               size="small"
               sx={{ 
                 width: '100%',
