@@ -24,6 +24,10 @@ export const COLOR_MAP = {
 
 export const createColorbar = (colorbar, VMIN=-92, VMAX=100, STEP=30, colorMap="default", skipStep=false) => {
     // Create a color scale using D3
+    if (!(colorMap in COLOR_MAP)) {
+        colorMap = "default";
+    }
+
     const colorScale = d3
         .scaleSequential(COLOR_MAP[colorMap])
         .domain([VMIN, VMAX]); // Set VMIN and VMAX as your desired min and max values
