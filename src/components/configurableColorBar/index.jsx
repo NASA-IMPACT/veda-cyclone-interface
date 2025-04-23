@@ -23,7 +23,7 @@ export const ConfigurableColorBar = ({ id, VMIN, VMAX, colorMap, dataProductBase
     let v = { ...dataProductBasedColorMap }
     let colorMap = currColorMap;
     if (isReversed) colorMap += "_r";
-    v[id] = { // should we base it off id, or key??? `dataProduct` (key) was used previously for the opacity
+    v[id] = {
       colorMap: colorMap,
       VMIN: currVMIN,
       VMAX: currVMAX
