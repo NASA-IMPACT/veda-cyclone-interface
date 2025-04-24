@@ -142,9 +142,10 @@ export function DetailedPlumeCard({ id, key, title, description, citation, atbd,
                         <HorizontalLayout>
                             <ConfigurableColorBar id={id} VMIN={VMIN} VMAX={VMAX} colorMap={colorMap} dataProductBasedColorMap={dataProductBasedColorMap} setDataProductBasedColorMap={setDataProductBasedColorMap}/>
                         </HorizontalLayout>
-                        <Typography variant="caption" gutterBottom sx={{ display: 'flex', color: "rgba(0, 0, 0, 0.6)", justifyContent: "flex-end", marginRight: "7%" }}>
-                            Unit: { units }
-                        </Typography>
+                        { units && <Typography variant="caption" gutterBottom sx={{ display: 'flex', color: "rgba(0, 0, 0, 0.6)", justifyContent: "flex-end", marginRight: "7%" }}>
+                                Unit: { units }
+                            </Typography>
+                        }
                     </div>
                 }
             </CardContent>
