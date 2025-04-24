@@ -14,11 +14,12 @@ import { ColorBar } from '../colorBar';
 import { COLOR_MAP } from '../colorBar/helper';
 
 
-export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN, setCurrColorMap, setIsReverse}) => {
+export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN, setSelColorMap, setIsReverse}) => {
   // State for the input values
   const [minValue, setMinValue] = useState(VMIN);
   const [maxValue, setMaxValue] = useState(VMAX);
   const [reverse, setReverse] = useState(false);
+  if (colorMap.includes("_r")) colorMap = colorMap.replaceAll("_r", ""); // sanitize reverse colormap in the default colormap.
   const [selectedColorbar, setSelectedColorbar] = useState(colorMap);
   const [error, setError] = useState(false);
   
@@ -98,7 +99,7 @@ export const ColormapOptions = ({VMIN, VMAX, colorMap, setCurrVMAX, setCurrVMIN,
   // Handle selecting a colorbar
   const handleColorbarClick = (name) => {
     setSelectedColorbar(name);
-    setCurrColorMap(name);
+    setSelColorMap(name);
   };
   
   return (

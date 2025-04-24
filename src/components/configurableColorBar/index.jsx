@@ -16,21 +16,23 @@ export const ConfigurableColorBar = ({ id, VMIN, VMAX, colorMap, dataProductBase
   const [currVMAX, setCurrVMAX] = useState(VMAX);
   const [currColorMap, setCurrColorMap] = useState(colorMap);
   const [isReversed, setIsReverse] = useState(false);
+  const [selColorMap, setSelColorMap] = useState(colorMap);
 
   useEffect(() => {
     // key == dataProduct
     // id == dataProduct + selectedCycloneId
     let v = { ...dataProductBasedColorMap }
-    let colorMap = currColorMap;
+    let colorMap = selColorMap;
     if (isReversed) colorMap += "_r";
     v[id] = {
       colorMap: colorMap,
       VMIN: currVMIN,
       VMAX: currVMAX
     }
+    setCurrColorMap(colorMap);
     setDataProductBasedColorMap(v)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currVMIN, currVMAX, currColorMap, isReversed])
+  }, [currVMIN, currVMAX, selColorMap, isReversed])
 
   return (
     <Accordion>
@@ -53,7 +55,7 @@ export const ConfigurableColorBar = ({ id, VMIN, VMAX, colorMap, dataProductBase
           colorMap={colorMap}
           setCurrVMAX={setCurrVMAX}
           setCurrVMIN={setCurrVMIN}
-          setCurrColorMap={setCurrColorMap}
+          setSelColorMap={setSelColorMap}
           setIsReverse={setIsReverse}
         />
       </AccordionDetails>
