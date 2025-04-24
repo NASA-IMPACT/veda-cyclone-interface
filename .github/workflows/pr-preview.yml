@@ -106,7 +106,7 @@ jobs:
         with:
           distribution-id: ${{ secrets.CF_DISTRIBUTION_ID }}
           paths: |
-            ${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}
+            ${{ vars.PUBLIC_URL }}pr-preview-${{ github.event.number }}/*
 
   clean_up:
     if: ${{ github.event.action == 'closed' }}
