@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import Typography from '@mui/material/Typography';
 
 import { createColorbar } from "./helper";

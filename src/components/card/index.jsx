@@ -95,7 +95,7 @@ export function PlumeCard({ id, title, description, VMIN, VMAX, colorMap, skipCo
   );
 }
 
-export function DetailedPlumeCard({ id, key, title, description, citation, atbd, references, VMIN, VMAX, colorMap, skipColorBar=false, dataProductBasedColorMap, setDataProductBasedColorMap }) {
+export function DetailedPlumeCard({ id, key, title, description, citation, atbd, references, VMIN, VMAX, colorMap, skipColorBar=false, units, dataProductBasedColorMap, setDataProductBasedColorMap }) {
     const isVector = String(id).includes("public.")
     return (
         <HighlightableCard
@@ -138,9 +138,14 @@ export function DetailedPlumeCard({ id, key, title, description, citation, atbd,
                  <HorizontalLayout/>
                 {isVector ?
                     <GetVectorColorBar id={id}/> :
-                    <HorizontalLayout>
-                        <ConfigurableColorBar id={id} VMIN={VMIN} VMAX={VMAX} colorMap={colorMap} dataProductBasedColorMap={dataProductBasedColorMap} setDataProductBasedColorMap={setDataProductBasedColorMap}/>
-                    </HorizontalLayout>
+                    <div>
+                        <HorizontalLayout>
+                            <ConfigurableColorBar id={id} VMIN={VMIN} VMAX={VMAX} colorMap={colorMap} dataProductBasedColorMap={dataProductBasedColorMap} setDataProductBasedColorMap={setDataProductBasedColorMap}/>
+                        </HorizontalLayout>
+                        <Typography variant="caption" gutterBottom sx={{ display: 'flex', color: "rgba(0, 0, 0, 0.6)", justifyContent: "flex-end", marginRight: "7%" }}>
+                            Unit: { units }
+                        </Typography>
+                    </div>
                 }
             </CardContent>
             </Box>

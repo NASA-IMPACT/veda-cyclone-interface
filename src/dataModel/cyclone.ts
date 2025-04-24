@@ -59,6 +59,7 @@ export interface RasterDataProduct { // ~ Collection
     rescale: [number, number]; // [min, max]
     assets: string, // to know the property in items containing the cog url
     colormap: string;
+    units: string | null;
 }
 
 export interface VectorDataProduct {
@@ -147,6 +148,7 @@ export interface STACCollection {
         roles?: string[];
         };
     };
+    units: string | null;
 }
 
 export interface FeatureCollection {
