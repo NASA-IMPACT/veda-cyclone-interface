@@ -126,4 +126,4 @@ jobs:
         with:
           distribution-id: ${{ secrets.CF_DISTRIBUTION_ID }}
           paths: |
-            ${{ vars.PUBLIC_URL }}
+            ${{ vars.PUBLIC_URL }}/*
