@@ -98,6 +98,7 @@ export function dataTransformationCyclone(STACCollections: STACCollection[][], S
             assets: rasterCollectionDictionary[collectionName].renders.dashboard.assets[0],
             rescale: rasterCollectionDictionary[collectionName].renders.dashboard.rescale,
             colormap: rasterCollectionDictionary[collectionName].renders.dashboard.colormap_name,
+            units: rasterCollectionDictionary[collectionName].units
         }
 
         if (!(cycloneName in cycloneDictionary)) {
