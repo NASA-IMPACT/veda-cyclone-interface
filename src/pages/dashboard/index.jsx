@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
@@ -56,6 +56,7 @@ export function Dashboard({ dataTreeCyclone, cyclones, dataProducts, zoomLocatio
   const [ selectedCycloneId, setSelectedCycloneId ] = useState(cyclones[Object.keys(cyclones)[0]].id);
   const [ selectedDataProductIds, setSelectedDataProductIds ] = useState([]);
   const [ selectedDataProductIdsOpacity, setSelectedDataProductIdsOpacity ] = useState({}); // [key: string(dataProductId)]: number
+  const [ dataProductBasedColorMap, setDataProductBasedColorMap ] = useState({}); // For configurable colormap -> [key: string(dataProductId)]: { colorMap: string; vmin: string, vmax: string }
 
   const [startDate, setStartDate] = useState(moment(BERYL_START_DATETIME).format()); // TODO: get this time based on the selected cyclone.
 
@@ -202,6 +203,7 @@ export function Dashboard({ dataTreeCyclone, cyclones, dataProducts, zoomLocatio
             selectedDataProductIds={selectedDataProductIds}
             startDate={startDate}
             selectedDataProductIdsOpacity={selectedDataProductIdsOpacity}
+            dataProductBasedColorMap={dataProductBasedColorMap}
           />
           <MapControls
             openDrawer={openDrawer}
@@ -241,6 +243,8 @@ export function Dashboard({ dataTreeCyclone, cyclones, dataProducts, zoomLocatio
           selectedCycloneId={selectedCycloneId}
           selectedDataProductIds={selectedDataProductIds}
           dataProductsTemp={dataProducts}
+          dataProductBasedColorMap={dataProductBasedColorMap}
+          setDataProductBasedColorMap={setDataProductBasedColorMap}
         />
       </div>
       {loadingData && <LoadingSpinner/>}

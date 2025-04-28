@@ -62,9 +62,8 @@ const HorizontalLayout = styled.div`
     margin-bottom: 5px;
 `;
 
-export function PersistentDrawerRight({open, selectedCycloneId, dataTree, selectedDataProductIds, dataProductsTemp}) {
+export function PersistentDrawerRight({open, selectedCycloneId, dataTree, selectedDataProductIds, dataProductsTemp, dataProductBasedColorMap, setDataProductBasedColorMap}) {
   const [ cycloneMetas, setCycloneMetas] = useState([]);
-
   useEffect(() => {
     if (!dataTree.current || !selectedCycloneId || !dataTree.current[selectedCycloneId]) return;
 
@@ -95,7 +94,8 @@ export function PersistentDrawerRight({open, selectedCycloneId, dataTree, select
         id: dp.id,
         colorMap: dp.colormap,
         rescale: dp.rescale[0],
-        key: key // TODO: remove later if not needed
+        key: key, // TODO: remove later if not needed
+        units: dp.units
       }
     }).filter(el => el);
     setCycloneMetas(metas)
@@ -152,6 +152,9 @@ export function PersistentDrawerRight({open, selectedCycloneId, dataTree, select
                 colorMap={cycloneMeta.colorMap}
                 VMIN={cycloneMeta.rescale[0]}
                 VMAX={cycloneMeta.rescale[1]}
+                units={cycloneMeta.units}
+                dataProductBasedColorMap={dataProductBasedColorMap}
+                setDataProductBasedColorMap={setDataProductBasedColorMap}
               />
               // <PlumeCard
               //   key={cycloneMeta.id}

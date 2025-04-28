@@ -10,6 +10,8 @@ import Divider from '@mui/material/Divider';
 import DownloadIcon from '@mui/icons-material/Download';
 import { ColorBar } from '../colorBar';
 import { ScatterometerLegend, BestTrackPointLegend, BestTrackLineLegend, WindSwathLegend } from './helper';
+import { ColormapOptions } from "../configurableColorBar"
+import { ConfigurableColorBar } from "../configurableColorBar";
 
 import "./index.css";
 
@@ -81,7 +83,9 @@ export function PlumeCard({ id, title, description, VMIN, VMAX, colorMap, skipCo
                     />
                 </HorizontalLayout>
                 {(!skipColorBar) &&<HorizontalLayout>
-                    <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorMap}/>
+                    <div>
+                        <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorMap}/>
+                    </div>
                 </HorizontalLayout>
                 }
             </CardContent>
@@ -91,7 +95,7 @@ export function PlumeCard({ id, title, description, VMIN, VMAX, colorMap, skipCo
   );
 }
 
-export function DetailedPlumeCard({ id, title, description, citation, atbd, references, VMIN, VMAX, colorMap, skipColorBar=false }) {
+export function DetailedPlumeCard({ id, key, title, description, citation, atbd, references, VMIN, VMAX, colorMap, skipColorBar=false, units, dataProductBasedColorMap, setDataProductBasedColorMap }) {
     const isVector = String(id).includes("public.")
     return (
         <HighlightableCard
@@ -132,9 +136,17 @@ export function DetailedPlumeCard({ id, title, description, citation, atbd, refe
                     })
                 }
                  <HorizontalLayout/>
-                {isVector ? <GetVectorColorBar id={id}/> : <HorizontalLayout>
-                    <ColorBar VMIN={VMIN} VMAX={VMAX} STEP={(VMAX-VMIN)/5} colorMap={colorMap}/>
-                </HorizontalLayout>
+                {isVector ?
+                    <GetVectorColorBar id={id}/> :
+                    <div>
+                        <HorizontalLayout>
+                            <ConfigurableColorBar id={id} VMIN={VMIN} VMAX={VMAX} colorMap={colorMap} dataProductBasedColorMap={dataProductBasedColorMap} setDataProductBasedColorMap={setDataProductBasedColorMap}/>
+                        </HorizontalLayout>
+                        { units && <Typography variant="caption" gutterBottom sx={{ display: 'flex', color: "rgba(0, 0, 0, 0.6)", justifyContent: "flex-end", marginRight: "7%" }}>
+                                { units }
+                            </Typography>
+                        }
+                    </div>
                 }
             </CardContent>
             </Box>
