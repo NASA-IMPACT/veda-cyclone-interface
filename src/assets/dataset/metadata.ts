@@ -343,25 +343,29 @@ export const CycloneMetas: CycloneMetaDict = {
     "public.modis_swath": {
         id: "public.modis_swath",
         title: "GOES-16 (2, 8, 13)",
-        description: "The GOES-16 satellite provides real-time, high-resolution imagery and atmospheric data, critical for weather monitoring and forecasting. Bands 2 (visible), 8 (infrared), and 13 (longwave infrared) offer vital insights into cloud formation, temperature, and storm dynamics.",
+        description: "The Moderate Resolution Imaging Spectroradiometer (MODIS) aboard NASA’s Terra and Aqua satellites captures data in 36 spectral bands (0.4–14.4 µm) at 250 m to 1 km resolution. MODIS provides near-daily global coverage, supporting land, ocean, and atmospheric studies. Band 31 (10.78–11.28 µm) is crucial for surface temperature retrievals.",
         citation: {
-            description: "NA",
+            description: "For accessing and citing the MODIS Level 1B Calibrated Radiances at 1 km resolution (product MYD021KM), please visit the following link",
             link: {
-                description: "NA",
-                link: ""
+                description: "MYD021KM Data Product Citation",
+                link: "https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MYD021KM#overview"
             }
         },
         atbd: {
-            description: "NA",
+            description: "Algorithm Theoretical Basis Documents (ATBDs) provide detailed descriptions of the algorithms used to process MODIS data products. For a comprehensive list of MODIS ATBDs, including those related to land, ocean, and atmospheric products, refer to NASA's Earth Observing System page",
             link: {
-                description: "NA",
-                link: ""    
+                description: "NASA MODIS ATBDs",
+                link: "https://eospso.nasa.gov/atbd-category/47"
             }
         },
         references: [
             {
-                description: "NA",
+                description: `King, M.D., Tsay, S.C., Platnick, S., Wang, M., Liou, K.N. (1998). "Cloud Retrieval Algorithms for MODIS: Optical Thickness, Effective Particle Radius, and Thermodynamic Phase.`,
                 link: ""    
+            },
+            {
+                description: `Seemann, S.W., Borbas, E.E., Li, J., Menzel, W.P., Gumley, L.E. (2006). "MODIS Atmospheric Profile Retrieval – ATBD (Collection 005).`,
+                link: ""
             }
         ]
     }
