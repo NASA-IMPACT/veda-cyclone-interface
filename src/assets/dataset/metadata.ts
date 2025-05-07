@@ -317,17 +317,17 @@ export const CycloneMetas: CycloneMetaDict = {
     },
     "public.wind_vectors": {
         id: "public.wind_vectors",
-        title: "GOES-16 (2, 8, 13)",
-        description: "The GOES-16 satellite provides real-time, high-resolution imagery and atmospheric data, critical for weather monitoring and forecasting. Bands 2 (visible), 8 (infrared), and 13 (longwave infrared) offer vital insights into cloud formation, temperature, and storm dynamics.",
+        title: "ASCAT (Scatterometer Winds)",
+        description: "The Advanced Scatterometer (ASCAT) onboard EUMETSAT’s MetOp-A, MetOp-B, and MetOp-C satellites measures radar backscatter at C-band (5.255 GHz) to derive near-surface (10-meter) wind speed and direction over the ocean. ASCAT provides global coverage approximately twice daily at a spatial resolution of 25 km (with 12.5 km products also available), supporting marine forecasting, oceanographic research, and weather modeling. ASCAT data are particularly valuable for detecting tropical and extratropical cyclones and studying ocean-atmosphere interactions.",
         citation: {
-            description: "NA",
+            description: "For accessing and citing the ASCAT Level 2 Ocean Surface Wind Vector products, please visit the following",
             link: {
                 description: "NA",
                 link: ""
             }
         },
         atbd: {
-            description: "NA",
+            description: "Algorithm Theoretical Basis Documents (ATBDs) provide detailed descriptions of the processing algorithms used to retrieve ASCAT wind vectors from radar backscatter measurements. For a comprehensive overview of the ASCAT wind retrieval methodology, refer to the official ATBD provided by EUMETSAT",
             link: {
                 description: "NA",
                 link: ""    
@@ -335,7 +335,7 @@ export const CycloneMetas: CycloneMetaDict = {
         },
         references: [
             {
-                description: "NA",
+                description: 'Figa-Saldaña, J., Wilson, J. J. W., Attema, E., Gelsthorpe, R., Drinkwater, M. R., Stoffelen, A. (2002). "The Advanced Scatterometer (ASCAT) on the Meteorological Operational (MetOp) Platform: A Follow On for European Wind Scatterometers." Canadian Journal of Remote Sensing, 28(3), 404–412.',
                 link: ""    
             }
         ]
@@ -343,25 +343,29 @@ export const CycloneMetas: CycloneMetaDict = {
     "public.modis_swath": {
         id: "public.modis_swath",
         title: "GOES-16 (2, 8, 13)",
-        description: "The GOES-16 satellite provides real-time, high-resolution imagery and atmospheric data, critical for weather monitoring and forecasting. Bands 2 (visible), 8 (infrared), and 13 (longwave infrared) offer vital insights into cloud formation, temperature, and storm dynamics.",
+        description: "The Moderate Resolution Imaging Spectroradiometer (MODIS) aboard NASA’s Terra and Aqua satellites captures data in 36 spectral bands (0.4–14.4 µm) at 250 m to 1 km resolution. MODIS provides near-daily global coverage, supporting land, ocean, and atmospheric studies. Band 31 (10.78–11.28 µm) is crucial for surface temperature retrievals.",
         citation: {
-            description: "NA",
+            description: "For accessing and citing the MODIS Level 1B Calibrated Radiances at 1 km resolution (product MYD021KM), please visit the following link",
             link: {
-                description: "NA",
-                link: ""
+                description: "MYD021KM Data Product Citation",
+                link: "https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MYD021KM#overview"
             }
         },
         atbd: {
-            description: "NA",
+            description: "Algorithm Theoretical Basis Documents (ATBDs) provide detailed descriptions of the algorithms used to process MODIS data products. For a comprehensive list of MODIS ATBDs, including those related to land, ocean, and atmospheric products, refer to NASA's Earth Observing System page",
             link: {
-                description: "NA",
-                link: ""    
+                description: "NASA MODIS ATBDs",
+                link: "https://eospso.nasa.gov/atbd-category/47"
             }
         },
         references: [
             {
-                description: "NA",
+                description: `King, M.D., Tsay, S.C., Platnick, S., Wang, M., Liou, K.N. (1998). "Cloud Retrieval Algorithms for MODIS: Optical Thickness, Effective Particle Radius, and Thermodynamic Phase.`,
                 link: ""    
+            },
+            {
+                description: `Seemann, S.W., Borbas, E.E., Li, J., Menzel, W.P., Gumley, L.E. (2006). "MODIS Atmospheric Profile Retrieval – ATBD (Collection 005).`,
+                link: ""
             }
         ]
     }
