@@ -9,10 +9,12 @@ export const fetchAllFromSTACAPI = async (STACApiUrl) => {
         throw new Error('Error in Network');
       }
       const jsonResult = await response.json();
+      if (!jsonResult) return requiredResult;
       requiredResult.push(...getResultArray(jsonResult));
       // need to pull in remaining data based on the pagination information
-      const { numberMatched, numberReturned } = jsonResult;
-      if (numberMatched > numberReturned) {
+      const numberMatched = jsonResult.numberMatched ?? jsonResult.context?.matched;
+      const numberReturned = jsonResult.numberReturned ?? jsonResult.context?.returned;
+      if (numberMatched !== undefined && numberReturned !== undefined && numberMatched > numberReturned) {
         let allData = await fetchAllDataSTAC(STACApiUrl, numberMatched);
         requiredResult = [...allData];
       }
